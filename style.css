@@ -1,243 +1,62 @@
-/* --- VARIABLES DE COLOR --- */
-:root {
-    --primary-color: #0056b3;
-    --primary-hover: #004494;
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-color: #333333;
-    --text-muted: #666666;
-    --error-color: #dc3545;
-    --border-color: #e0e0e0;
-    --radius: 12px;
-    --transition: 0.3s ease;
-}
-
-/* --- RESET BÁSICO --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-.container {
-    width: 100%;
-    max-width: 800px;
-}
-
-/* --- CABECERA --- */
-.app-header {
+/* --- NUEVOS ESTILOS PARA META Y CHECKLISTS --- */
+.meta-destacada {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 15px;
+    border-radius: 8px;
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.app-header h1 {
-    color: var(--primary-color);
-    font-size: 2.5rem;
-}
-
-.subtitle {
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-/* --- DISEÑO DE TARJETAS (CARDS) --- */
-.card {
-    background-color: var(--card-bg);
-    padding: 30px;
-    border-radius: var(--radius);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    margin-bottom: 25px;
-}
-
-.card h2 {
-    color: var(--primary-color);
     margin-bottom: 20px;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    font-size: 1.1em;
+    border-left: 5px solid #1565c0;
 }
 
-/* --- FORMULARIO --- */
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.input-group input {
+.progress-container {
     width: 100%;
-    padding: 12px 15px;
-    border: 2px solid var(--border-color);
+    background-color: #e0e0e0;
     border-radius: 8px;
-    font-size: 1rem;
-    transition: var(--transition);
-    outline: none;
+    margin: 15px 0;
+    overflow: hidden;
 }
 
-/* Efecto cuando das clic en la caja de texto */
-.input-group input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+.progress-bar {
+    height: 12px;
+    background-color: #27ae60;
+    width: 0%;
+    transition: width 0.4s ease;
 }
 
-.error-msg {
-    color: var(--error-color);
-    font-size: 0.85rem;
-    margin-top: 5px;
-    display: block;
-    min-height: 20px;
+.progreso-texto {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
 }
 
-/* --- BOTÓN PRINCIPAL --- */
-.btn-primary {
-    width: 100%;
-    padding: 15px;
-    background-color: var(--primary-color);
+.checkbox-materia {
+    margin-right: 10px;
+    cursor: pointer;
+    transform: scale(1.3);
+}
+
+.completado {
+    text-decoration: line-through;
+    color: #95a5a6;
+    transition: all 0.3s ease;
+}
+
+.btn-reset {
+    background-color: #e74c3c;
     color: white;
     border: none;
+    padding: 12px 20px;
     border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px);
-}
-
-/* --- SECCIÓN DE RESULTADOS --- */
-.hidden {
-    display: none !important;
-}
-
-.result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-icon:hover {
-    color: var(--primary-hover);
-    transform: scale(1.1);
-}
-
-/* --- TABLA RESPONSIVA --- */
-.table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-table {
+    font-weight: bold;
+    margin-top: 10px;
     width: 100%;
-    border-collapse: collapse;
-    min-width: 500px;
+    transition: background 0.3s;
 }
 
-th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
-th {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:hover {
-    background-color: rgba(0, 86, 179, 0.03);
-}
-
-.repaso-row {
-    background-color: rgba(0, 86, 179, 0.1) !important;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-/* --- MENSAJE MOTIVACIONAL --- */
-.motivation-box {
-    margin-top: 25px;
-    padding: 15px;
-    background-color: rgba(0, 86, 179, 0.05);
-    border-left: 4px solid var(--primary-color);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.motivation-box i {
-    color: var(--primary-color);
-    font-size: 1.5rem;
-}
-
-.motivation-box p {
-    font-weight: 500;
-    margin: 0;
-}
-
-/* --- MODO IMPRESIÓN --- */
-@media print {
-    body {
-        background-color: white;
-        padding: 0;
-    }
-    
-    .form-section, .btn-icon {
-        display: none !important;
-    }
-
-    .card {
-        box-shadow: none;
-        padding: 0;
-    }
-
-    .table-container {
-        border: 1px solid #000;
-    }
-
-    th {
-        background-color: var(--primary-color) !important; 
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
+.btn-reset:hover {
+    background-color: #c0392b;
 }
