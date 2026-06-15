@@ -1,4 +1,192 @@
-/* --- NUEVOS ESTILOS PARA META Y CHECKLISTS --- */
+/* --- VARIABLES GLOBALES (Colores y Fuentes) --- */
+:root {
+    --primary-color: #1565c0;
+    --primary-hover: #0d47a1;
+    --bg-color: #f4f7f6;
+    --text-color: #333;
+    --border-color: #ddd;
+    --success-color: #27ae60;
+    --danger-color: #e74c3c;
+    --card-bg: #ffffff;
+}
+
+/* --- ESTILOS BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--bg-color);
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2.5em;
+    margin-bottom: 5px;
+}
+
+header p { color: #666; }
+
+/* --- FORMULARIO --- */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.help-text {
+    display: block;
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 5px;
+}
+
+.error {
+    color: var(--danger-color);
+    font-size: 0.85em;
+    display: block;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* --- BOTONES --- */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-reset {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+.btn-reset:hover { background-color: #c0392b; }
+
+.actions-container {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* --- UTILIDADES --- */
+.hidden {
+    display: none !important;
+}
+
+/* --- TABLA DE RESULTADOS --- */
+#resultSection {
+    margin-top: 40px;
+    animation: fadeIn 0.5s ease-in;
+}
+
+#welcomeMessage {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+tr:hover { background-color: #f9f9f9; }
+
+.repaso-row { background-color: #f1f8e9; }
+
+.motivation-box {
+    background-color: #e3f2fd;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+    text-align: center;
+    font-style: italic;
+    color: #1565c0;
+    font-weight: 500;
+}
+
+/* --- NUEVO: ESTILOS PARA META Y CHECKLISTS (PRO) --- */
 .meta-destacada {
     background: #e3f2fd;
     color: #1565c0;
@@ -20,7 +208,7 @@
 
 .progress-bar {
     height: 12px;
-    background-color: #27ae60;
+    background-color: var(--success-color);
     width: 0%;
     transition: width 0.4s ease;
 }
@@ -44,19 +232,14 @@
     transition: all 0.3s ease;
 }
 
-.btn-reset {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 10px;
-    width: 100%;
-    transition: background 0.3s;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.btn-reset:hover {
-    background-color: #c0392b;
+/* Reglas de Impresión */
+@media print {
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; max-width: 100%; }
+    #plannerForm, .actions-container, .motivation-box { display: none !important; }
 }
