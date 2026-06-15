@@ -15,7 +15,6 @@ const subjectsError = document.getElementById('subjectsError');
 const hoursError = document.getElementById('hoursError');
 
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-
 const frases = [
     "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
     "La disciplina es el puente entre tus metas y tus logros.",
@@ -28,13 +27,21 @@ function limpiarErrores() {
     hoursError.textContent = '';
 }
 
+// NUEVO: Algoritmo para calcular horas reales (reloj)
+function sumarTiempo(horaBase, minutosSumar) {
+    let [horas, minutos] = horaBase.split(':').map(Number);
+    minutos += Math.round(minutosSumar);
+    horas += Math.floor(minutos / 60);
+    minutos = minutos % 60;
+    return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`;
+}
+
 // 2. LÓGICA PRINCIPAL AL GENERAR EL HORARIO
 form.addEventListener('submit', function(event) {
     event.preventDefault();
     limpiarErrores();
     let hayErrores = false;
 
-    // --- VALIDACIONES BÁSICAS ---
     const nombre = studentNameInput.value.trim();
     if (nombre === '') {
         nameError.textContent = 'Por favor, ingresa tu nombre.';
@@ -47,42 +54,38 @@ form.addEventListener('submit', function(event) {
         hayErrores = true;
     }
 
-    const horas = parseInt(hoursInput.value);
-    if (isNaN(horas) || horas < 1 || horas > 12) {
-        hoursError.textContent = 'Ingresa un número válido de horas (entre 1 y 12).';
+    const horas = parseFloat(hoursInput.value);
+    
+    // NUEVO: MANEJO DE CONFLICTOS
+    if (isNaN(horas) || horas <= 0) {
+        hoursError.textContent = 'Ingresa un número válido de horas.';
+        hayErrores = true;
+    } else if (horas > 8) {
+        hoursError.textContent = '¡Alerta de Conflicto! Estudiar más de 8 horas al día causa agotamiento. Reduce la carga.';
         hayErrores = true;
     }
 
     if (hayErrores) return;
 
-    // --- PROCESAMIENTO AVANZADO DE DATOS ---
-    // Convertimos el texto en un arreglo limpio de materias
     const materiasArray = materiasTexto.split(',').map(m => m.trim()).filter(m => m !== '');
-
-    // Validación avanzada: Evitar que pongan 20 materias para 1 hora diaria
-    const horasTotalesSemana = horas * 5;
-    if (materiasArray.length > horasTotalesSemana) {
-        subjectsError.textContent = `¡Son demasiadas materias (${materiasArray.length}) para tan pocas horas a la semana (${horasTotalesSemana} hrs totales)!`;
+    
+    // NUEVO: MANEJO DE SUPERPOSICIONES EXTREMAS
+    if (materiasArray.length > (horas * 5) * 2) {
+        subjectsError.textContent = `¡Error de Superposición! Tienes demasiadas materias para tan poco tiempo.`;
         return;
     }
 
-    // --- ALGORITMO DE DISTRIBUCIÓN ---
-    // Creamos 5 "cajitas" (arreglos) vacías, una para cada día de la semana
     const horarioSemanal = [[], [], [], [], []];
-    
     let diaActual = 0;
     
-    // Repartimos las materias
     materiasArray.forEach(materia => {
         horarioSemanal[diaActual].push(materia);
         diaActual++;
-        if (diaActual > 4) diaActual = 0; // Si llega al viernes, regresa al lunes
+        if (diaActual > 4) diaActual = 0;
     });
 
-    // Limpiamos la tabla antes de construirla
     tableBody.innerHTML = ''; 
 
-    // --- MANIPULACIÓN DEL DOM (CONSTRUCCIÓN DINÁMICA) ---
     horarioSemanal.forEach((materiasDelDia, index) => {
         const tr = document.createElement('tr');
         const tdDia = document.createElement('td');
@@ -92,17 +95,34 @@ form.addEventListener('submit', function(event) {
         tdDia.innerHTML = `<strong>${diasSemana[index]}</strong>`;
 
         if (materiasDelDia.length === 0) {
-            // Si sobran días vacíos
-            tdMateria.innerHTML = '<em>Repaso General / Descanso</em>';
-            tdHoras.textContent = horas + ' hrs libres';
+            tdMateria.innerHTML = '<em>Día de Recuperación</em>';
+            tdHoras.innerHTML = `<span style="color: #27ae60; font-weight: 600;">Libre</span>`;
             tr.classList.add('repaso-row');
         } else {
-            // Unimos las materias del día
-            tdMateria.innerHTML = '• ' + materiasDelDia.join('<br>• ');
+            // NUEVO: LÓGICA DE TIEMPOS Y PAUSAS INTELIGENTES
+            const minutosTotales = horas * 60;
+            const cantidadPausas = materiasDelDia.length > 1 ? materiasDelDia.length - 1 : 0;
+            const minutosPausaTotales = cantidadPausas * 15; // 15 min de descanso entre materias
+            
+            const minutosPorMateria = (minutosTotales - minutosPausaTotales) / materiasDelDia.length;
+            
+            let horaActual = "16:00"; // Simulamos que el estudio siempre empieza a las 4:00 PM
+            let htmlMaterias = '';
 
-            // Calculamos cuánto tiempo le toca a cada materia hoy
-            const horasPorMateria = (horas / materiasDelDia.length).toFixed(1);
-            tdHoras.innerHTML = `<span style="color: var(--primary-color); font-weight: 600;">${horasPorMateria} hrs</span> por materia<br><small>(Total: ${horas} hrs)</small>`;
+            materiasDelDia.forEach((materia, i) => {
+                let horaFin = sumarTiempo(horaActual, minutosPorMateria);
+                htmlMaterias += `• <strong>${materia}</strong> <br><small style="color: #555;">⏱ ${horaActual} a ${horaFin}</small><br>`;
+                
+                // Si no es la última materia del día, mete una pausa
+                if (i < materiasDelDia.length - 1) {
+                    horaActual = sumarTiempo(horaFin, 15);
+                    htmlMaterias += `<span style="color: #e67e22; font-size: 0.85em; display: block; margin: 4px 0;">☕ Pausa de 15 min (hasta ${horaActual})</span>`;
+                }
+            });
+
+            tdMateria.innerHTML = htmlMaterias;
+            const horasPuras = (minutosPorMateria / 60).toFixed(1);
+            tdHoras.innerHTML = `<span style="color: var(--primary-color); font-weight: 600;">${horasPuras} hrs</span> netas<br><small>(Total con pausas: ${horas} hrs)</small>`;
         }
 
         tr.appendChild(tdDia);
@@ -111,13 +131,11 @@ form.addEventListener('submit', function(event) {
         tableBody.appendChild(tr);
     });
 
-    // --- MOSTRAR RESULTADOS ---
     welcomeMessage.textContent = `¡Planificador optimizado para ${nombre}!`;
     motivationMessage.textContent = frases[Math.floor(Math.random() * frases.length)];
     resultSection.classList.remove('hidden');
 });
 
-// 3. EVENTO DE IMPRESIÓN
 printBtn.addEventListener('click', function() {
     window.print();
 });
