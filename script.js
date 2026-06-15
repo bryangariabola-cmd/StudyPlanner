@@ -1,5 +1,4 @@
 // 1. SELECCIONAMOS LOS ELEMENTOS DEL HTML
-// Aquí "conectamos" nuestro JS con las cajas de texto y botones que hicimos en HTML
 const form = document.getElementById('plannerForm');
 const studentNameInput = document.getElementById('studentName');
 const subjectsInput = document.getElementById('subjects');
@@ -11,38 +10,31 @@ const tableBody = document.getElementById('tableBody');
 const motivationMessage = document.getElementById('motivationMessage');
 const printBtn = document.getElementById('printBtn');
 
-// Elementos para mostrar errores
 const nameError = document.getElementById('nameError');
 const subjectsError = document.getElementById('subjectsError');
 const hoursError = document.getElementById('hoursError');
 
-// Días de la semana que usaremos para la tabla
 const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
 
-// Pequeño catálogo de frases motivacionales
 const frases = [
-    "El éxito es la suma de pequeños esfuerzos repetidos día tras día. ¡A darle con todo!",
+    "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
     "La disciplina es el puente entre tus metas y tus logros.",
-    "No te detengas hasta que te sientas orgulloso de tus proyectos.",
     "Un pequeño paso cada día construye grandes resultados."
 ];
 
-// Función para limpiar los textos rojos de error
 function limpiarErrores() {
     nameError.textContent = '';
     subjectsError.textContent = '';
     hoursError.textContent = '';
 }
 
-// 2. ¿QUÉ PASA CUANDO LE DAN CLIC AL BOTÓN "GENERAR"?
+// 2. LÓGICA PRINCIPAL AL GENERAR EL HORARIO
 form.addEventListener('submit', function(event) {
-    // Evitamos que la página se recargue automáticamente
     event.preventDefault();
     limpiarErrores();
-
     let hayErrores = false;
 
-    // --- VALIDACIONES ---
+    // --- VALIDACIONES BÁSICAS ---
     const nombre = studentNameInput.value.trim();
     if (nombre === '') {
         nameError.textContent = 'Por favor, ingresa tu nombre.';
@@ -61,57 +53,71 @@ form.addEventListener('submit', function(event) {
         hayErrores = true;
     }
 
-    // Si detectamos un error, detenemos la máquina aquí mismo
     if (hayErrores) return;
 
+    // --- PROCESAMIENTO AVANZADO DE DATOS ---
+    // Convertimos el texto en un arreglo limpio de materias
+    const materiasArray = materiasTexto.split(',').map(m => m.trim()).filter(m => m !== '');
 
-    // --- PROCESAR LOS DATOS ---
-    // Tomamos el texto "Mate, Español, Física", lo cortamos por las comas y lo hacemos una lista
-    const materiasArray = materiasTexto.split(',').map(materia => materia.trim()).filter(materia => materia !== '');
+    // Validación avanzada: Evitar que pongan 20 materias para 1 hora diaria
+    const horasTotalesSemana = horas * 5;
+    if (materiasArray.length > horasTotalesSemana) {
+        subjectsError.textContent = `¡Son demasiadas materias (${materiasArray.length}) para tan pocas horas a la semana (${horasTotalesSemana} hrs totales)!`;
+        return;
+    }
 
-    // Limpiamos la tabla por si el usuario está generando un segundo horario
+    // --- ALGORITMO DE DISTRIBUCIÓN ---
+    // Creamos 5 "cajitas" (arreglos) vacías, una para cada día de la semana
+    const horarioSemanal = [[], [], [], [], []];
+    
+    let diaActual = 0;
+    
+    // Repartimos las materias
+    materiasArray.forEach(materia => {
+        horarioSemanal[diaActual].push(materia);
+        diaActual++;
+        if (diaActual > 4) diaActual = 0; // Si llega al viernes, regresa al lunes
+    });
+
+    // Limpiamos la tabla antes de construirla
     tableBody.innerHTML = ''; 
 
-    // --- CONSTRUIR LA TABLA ---
-    // Este ciclo se repetirá 5 veces (una por cada día de la semana)
-    for (let i = 0; i < diasSemana.length; i++) {
-        const tr = document.createElement('tr'); // Creamos una fila
-        const tdDia = document.createElement('td'); // Celda del día
-        const tdMateria = document.createElement('td'); // Celda de la materia
-        const tdHoras = document.createElement('td'); // Celda de las horas
+    // --- MANIPULACIÓN DEL DOM (CONSTRUCCIÓN DINÁMICA) ---
+    horarioSemanal.forEach((materiasDelDia, index) => {
+        const tr = document.createElement('tr');
+        const tdDia = document.createElement('td');
+        const tdMateria = document.createElement('td');
+        const tdHoras = document.createElement('td');
 
-        tdDia.textContent = diasSemana[i];
-        tdHoras.textContent = horas + ' hrs';
+        tdDia.innerHTML = `<strong>${diasSemana[index]}</strong>`;
 
-        // Lógica clave: Si aún hay materias en la lista, las ponemos. Si ya no hay, ponemos Repaso.
-        if (i < materiasArray.length) {
-            tdMateria.textContent = materiasArray[i];
+        if (materiasDelDia.length === 0) {
+            // Si sobran días vacíos
+            tdMateria.innerHTML = '<em>Repaso General / Descanso</em>';
+            tdHoras.textContent = horas + ' hrs libres';
+            tr.classList.add('repaso-row');
         } else {
-            tdMateria.textContent = 'Repaso General';
-            // Le agregamos la clase CSS que pone la fila color azul clarito
-            tr.classList.add('repaso-row'); 
+            // Unimos las materias del día
+            tdMateria.innerHTML = '• ' + materiasDelDia.join('<br>• ');
+
+            // Calculamos cuánto tiempo le toca a cada materia hoy
+            const horasPorMateria = (horas / materiasDelDia.length).toFixed(1);
+            tdHoras.innerHTML = `<span style="color: var(--primary-color); font-weight: 600;">${horasPorMateria} hrs</span> por materia<br><small>(Total: ${horas} hrs)</small>`;
         }
 
-        // Metemos las celdas a la fila, y la fila a la tabla
         tr.appendChild(tdDia);
         tr.appendChild(tdMateria);
         tr.appendChild(tdHoras);
         tableBody.appendChild(tr);
-    }
+    });
 
-    // --- MOSTRAR LOS RESULTADOS ---
-    // Personalizamos el título
-    welcomeMessage.textContent = `¡Hola, ${nombre}! Aquí está tu plan de estudio:`;
-    
-    // Elegimos una frase motivacional al azar
-    const fraseAleatoria = frases[Math.floor(Math.random() * frases.length)];
-    motivationMessage.textContent = fraseAleatoria;
-
-    // Hacemos aparecer la tabla quitándole la clase 'hidden' (oculto)
+    // --- MOSTRAR RESULTADOS ---
+    welcomeMessage.textContent = `¡Planificador optimizado para ${nombre}!`;
+    motivationMessage.textContent = frases[Math.floor(Math.random() * frases.length)];
     resultSection.classList.remove('hidden');
 });
 
-// 3. ¿QUÉ PASA CUANDO LE DAN CLIC A IMPRIMIR?
+// 3. EVENTO DE IMPRESIÓN
 printBtn.addEventListener('click', function() {
-    window.print(); // Abre la ventana nativa de impresión de la Mac
+    window.print();
 });
