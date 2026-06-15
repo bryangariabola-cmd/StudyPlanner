@@ -61,7 +61,7 @@ label {
     color: #444;
 }
 
-input[type="text"], input[type="number"] {
+input[type="text"], input[type="number"], input[type="time"] {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-color);
@@ -186,7 +186,7 @@ tr:hover { background-color: #f9f9f9; }
     font-weight: 500;
 }
 
-/* --- NUEVO: ESTILOS PARA META Y CHECKLISTS (PRO) --- */
+/* --- COMPONENTES AVANZADOS (META, SUEÑO Y POMODORO) --- */
 .meta-destacada {
     background: #e3f2fd;
     color: #1565c0;
@@ -226,10 +226,58 @@ tr:hover { background-color: #f9f9f9; }
     transform: scale(1.3);
 }
 
+.materia-label {
+    cursor: pointer;
+    display: inline-block;
+}
+
 .completado {
     text-decoration: line-through;
     color: #95a5a6;
     transition: all 0.3s ease;
+}
+
+.pomodoro-box {
+    background-color: #fff3e0;
+    border-left: 5px solid #ff9800;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#pomodoroTimer {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #d35400;
+    margin: 10px 0;
+    font-family: monospace;
+}
+
+.btn-pomodoro {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background 0.3s;
+}
+
+.btn-pomodoro:hover { background-color: #e67e22; }
+
+.alerta-sueno {
+    background-color: #ffeaa7;
+    color: #d35400;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 0.95em;
+    font-weight: bold;
+    text-align: center;
+    border-left: 5px solid #ff9800;
 }
 
 @keyframes fadeIn {
@@ -240,6 +288,6 @@ tr:hover { background-color: #f9f9f9; }
 /* Reglas de Impresión */
 @media print {
     body { background: white; padding: 0; }
-    .container { box-shadow: none; max-width: 100%; }
-    #plannerForm, .actions-container, .motivation-box { display: none !important; }
+    .container { box-shadow: none; max-width: 100%; padding: 0; }
+    #plannerForm, .actions-container, .motivation-box, #pomodoroContainer, .progress-container, .progreso-texto, .checkbox-materia { display: none !important; }
 }
