@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StudyPlanner - Generador automático de horarios de estudio.">
+    <title>StudyPlanner | Nivel Pro</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="app-header">
+            <h1><i class="fa-solid fa-graduation-cap"></i> StudyPlanner</h1>
+            <p class="subtitle">Organiza tu éxito académico</p>
+        </header>
+
+        <main>
+            <section class="card form-section">
+                <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Configura tu Horario</h2>
+                <form id="plannerForm" novalidate>
+                    
+                    <div class="input-group">
+                        <label for="studentName"><i class="fa-regular fa-user"></i> Tu Nombre:</label>
+                        <input type="text" id="studentName" placeholder="Ej. Juan Pablo" autocomplete="off">
+                        <span class="error-msg" id="nameError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="subjects"><i class="fa-solid fa-book"></i> Materias (separadas por comas):</label>
+                        <input type="text" id="subjects" placeholder="Ej. Matemáticas, Programación, Química" autocomplete="off">
+                        <span class="error-msg" id="subjectsError"></span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="hoursPerDay"><i class="fa-regular fa-clock"></i> Horas al día:</label>
+                        <input type="number" id="hoursPerDay" min="1" max="12" placeholder="Ej. 3">
+                        <span class="error-msg" id="hoursError"></span>
+                    </div>
+
+                    <button type="submit" id="generateBtn" class="btn-primary">
+                        <i class="fa-solid fa-calendar-plus"></i> Generar Horario
+                    </button>
+                </form>
+            </section>
+
+            <section id="resultSection" class="card result-section hidden">
+                <div id="scheduleCard" class="schedule-wrapper">
+                    <div class="result-header">
+                        <h2 id="welcomeMessage"></h2>
+                        <button id="printBtn" class="btn-icon" title="Imprimir horario" aria-label="Imprimir">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="scheduleTable">
+                            <thead>
+                                <tr>
+                                    <th><i class="fa-regular fa-calendar-days"></i> Día</th>
+                                    <th><i class="fa-solid fa-layer-group"></i> Materias Asignadas</th>
+                                    <th><i class="fa-solid fa-stopwatch"></i> Horas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="motivation-box">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <p id="motivationMessage"></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
